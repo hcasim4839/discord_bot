@@ -12,7 +12,7 @@ import os
 import datetime
 
 load_dotenv()
-server_url = os.getenv("ServerEndpoint")
+server_url = "https://q19me3z8id.execute-api.us-east-1.amazonaws.com/Prod"
 
 def get_secret(secret_key, secret_name):
     '''
@@ -53,7 +53,7 @@ def start_server(game_name):
             
     '''
     try:
-        url = f"{server_url}"
+        url = ''
 
         json_request = {
             "gameName": game_name
