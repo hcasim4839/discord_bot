@@ -9,6 +9,7 @@ import json
 import requests
 from dotenv import load_dotenv
 import os
+import datetime
 
 load_dotenv()
 server_url = os.getenv("ServerEndpoint")
@@ -68,3 +69,15 @@ def start_server(game_name):
     except Exception as e:
         exception_message = str(e)
         return Exception, exception_message
+
+def check_if_elapsed_time_passed(start_time:datetime.datetime, end_time:datetime.datetime, timeout_duration:int) -> bool:
+    '''
+    Checks if x amount of time passed given a start and endtime with datetime datatype
+
+    Returns:
+        bool: Whether the sufficient time has passed
+    '''
+    time_passed = end_time - start_time
+    has_sufficient_time_passed = time_passed >= datetime.timedelta(minutes=timeout_duration)
+
+    return has_sufficient_time_passed

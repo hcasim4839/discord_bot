@@ -39,7 +39,7 @@ class MyClient(discord.Client):
                 await message.channel.send(f'Something went wrong in the pipeline!\n{informing_issuer_msg}')
                 await self.ping_issuer_error(message=message,responseType=responseType, responseMessage=responseMessage)
 
-        is_last_server_cmd_usage_under_three = self.last_server_startup == None or datetime.datetime.now() - self.last_server_startup >= datetime.timedelta(minutes=3)
+        is_last_server_cmd_usage_under_three = self.last_server_startup == None or bot_utilities.check_if_elapsed_time_passed(self.last_server_startup,datetime.datetime.now(), 3)
 
         if message.content.lower() == 'start' and is_last_server_cmd_usage_under_three:
             await message.channel.send(f'uh, hey! Do you want me to start the server?')
@@ -53,6 +53,7 @@ class MyClient(discord.Client):
     async def ping_issuer_error(self,message, responseType, responseMessage):
 
         user_id = bot_utilities.get_secret('client_id_discord_user_id','client-id')
+        user_id = int(user_id)
         user = self.client.get_user(user_id)
         
         if user:
