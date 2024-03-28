@@ -10,9 +10,10 @@ import requests
 from dotenv import load_dotenv
 import os
 import datetime
+import logging 
 
+logger = logging.getLogger(__name__)
 load_dotenv()
-server_url = os.getenv("ServerEndpoint")
 
 def get_secret(secret_key, secret_name):
     '''
@@ -53,21 +54,28 @@ def start_server(game_name):
             
     '''
     try:
-        url = f"{server_url}"
+        url = 'https://q19me3z8id.execute-api.us-east-1.amazonaws.com/Prod/connect/Aternos'
 
         json_request = {
             "gameName": game_name
         }
 
         response = requests.post(url,json_request)
+        print(f'The response from url:\n{response}')
+
         json_message = response.json()
 
+        logger.info(f'Status code: {response.status_code}')
+        print(f'JSON response: {json_message}')
+
         if response.status_code == 200:
+            logger.info(f'Response successful')
             return response.status_code, json_message
         else:
             return response.status_code, json_message
     except Exception as e:
         exception_message = str(e)
+        logger.exception(f'Exception: {e}')
         return Exception, exception_message
 
 def check_if_elapsed_time_passed(start_time:datetime.datetime, end_time:datetime.datetime, timeout_duration:int) -> bool:
