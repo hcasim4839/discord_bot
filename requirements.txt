@@ -1,0 +1,5 @@
+discord
+boto3
+requests
+python-dotenv
+table2ascii
