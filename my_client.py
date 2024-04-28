@@ -40,8 +40,12 @@ class MyClient(discord.Client):
             amt_of_row = len(tracks_and_artist_list)
 
             table = bot_utilities.create_ascii_table(amt_of_rows=amt_of_row, row_list=tracks_and_artist_list,header_list=['Artist Name', 'Track Name'])
+            bot_message = f'Soo, I\'m getting these song results:`\n{table}`'
+            reaction_list = ['1️⃣','2️⃣','3️⃣', '4️⃣', '5️⃣', '6️⃣']
 
-            await message.channel.send(f'Soo, I\'m getting these song results:`\n{table}`')
+            sent_bot_message = await message.channel.send(bot_message)
+            await bot_utilities.insert_reactions_to_message(sent_bot_message,reaction_list)
+            
 
 
         if message.author.id in self.start_bot_commands and self.start_bot_commands[message.author.id] == 'start_server' and user_text.lower() == 'ya':
