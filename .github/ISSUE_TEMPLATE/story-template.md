@@ -12,4 +12,4 @@ assignees: ''
 Long term goals:
 
 ***Requirements***
-- [ ]
+- [ ] <!---Make sure to have one space after right bracket--->
