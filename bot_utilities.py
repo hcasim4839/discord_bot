@@ -94,7 +94,11 @@ def create_ascii_table(amt_of_rows, row_list, column_width = None, cell_alignmen
     table = table2ascii(body=table_body,header=header_list, cell_padding=2)
     return table
 
+async def insert_reactions_to_message(message, reaction_list):
+    for reaction in reaction_list:
+        await message.add_reaction(f'{reaction}')
 
+    return message
 
 def connect_to_api_endpoint(http_method, url, header_dict=None, query_parameters_dict=None, path_parameter_dict=None,data=None):
     try:
