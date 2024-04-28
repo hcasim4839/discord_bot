@@ -15,7 +15,6 @@ class MyClient(discord.Client):
     start_bot_commands = {}
     spam_list = ['You are going to have to wait three minutes...','Try not to spam that',"It's quite expensive to start the servers you know!","You know this is using AWS resources too right?"]
 
-    #client = discord.Client(intents=discord.Intents.default())
     last_server_startup = None
     def __init__(self,client_secret_cache, intents, *args, **kwargs):
         super().__init__(*args, **kwargs, intents=intents)
