@@ -18,8 +18,20 @@ class Spotify():
         self.access_token = f"Bearer {result.get('access_token')}"
 
         print(f'works {self.access_token}')
-        
-    def get_track(self,keyword):
+    def get_track_names_and_artist(self, tracks_list):
+        result_list = []
+        print(f'In the music_spotify: {tracks_list}')
+        for track in tracks_list:
+            print(f'The current track: {track}')
+            new_entry = [
+                track['album']['artists'][0]['name'],
+                track['name'],
+                ]
+            result_list.append(new_entry)
+        return result_list
+
+
+    def get_track_info(self,keyword):
 
         url = 'https://api.spotify.com/v1/search'
         query_params = {
@@ -31,4 +43,5 @@ class Spotify():
         header_params = {
             'Authorization' : self.access_token
         }
-        connect_to_api_endpoint(http_method='GET', url=url, query_parameters_dict=query_params,header_dict=header_params)
+        search_result = connect_to_api_endpoint(http_method='GET', url=url, query_parameters_dict=query_params,header_dict=header_params)
+        return search_result['tracks']['items']
