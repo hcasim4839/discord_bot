@@ -33,8 +33,17 @@ class MyClient(discord.Client):
         user_text = message.content
         print(f'Message from {message.author}: {user_text}')
         if message.author.id in self.start_bot_commands and self.start_bot_commands[message.author.id] == 'find_track' and user_text:
-            result = self.spotify_player.get_track(user_text)
-            await message.channel.send(f'Soo, I\'m getting the results:')
+            self.start_bot_commands[message.author.id] = None
+            tracks_list = self.spotify_player.get_track_info(user_text)
+            print(tracks_list)
+            tracks_and_artist_list = self.spotify_player.get_track_names_and_artist(tracks_list)
+            amt_of_row = len(tracks_and_artist_list)
+
+            table = bot_utilities.create_ascii_table(amt_of_rows=amt_of_row, row_list=tracks_and_artist_list,header_list=['Artist Name', 'Track Name'])
+
+            await message.channel.send(f'Soo, I\'m getting these song results:`\n{table}`')
+
+
         if message.author.id in self.start_bot_commands and self.start_bot_commands[message.author.id] == 'start_server' and user_text.lower() == 'ya':
             informing_issuer_msg = f'I\'ll ping {self.issuer}'
 
