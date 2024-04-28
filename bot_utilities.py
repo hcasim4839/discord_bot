@@ -15,7 +15,7 @@ from table2ascii import table2ascii
 load_dotenv()
 server_url = "https://q19me3z8id.execute-api.us-east-1.amazonaws.com/Prod"
 secret_dict_cache = []
-def get_secret(secret_key, secret_name):
+def get_secret(secret_key:str, secret_name:str):
     '''
     Connects to aws secret manager
         Returns:
@@ -73,7 +73,7 @@ def start_server(game_name):
 
 def check_if_elapsed_time_passed(start_time:datetime.datetime, end_time:datetime.datetime, timeout_duration:int) -> bool:
     '''
-    Checks if x amount of time passed given a start and endtime with datetime datatype
+    Checks if x amount of minutes have passed given a start and endtime with datetime datatype
 
     Returns:
         bool: Whether the sufficient time has passed
@@ -83,7 +83,7 @@ def check_if_elapsed_time_passed(start_time:datetime.datetime, end_time:datetime
 
     return has_sufficient_time_passed
 
-def create_ascii_table(amt_of_rows, row_list, column_width = None, cell_alignment_list = None, header_list = None):
+def create_ascii_table(amt_of_rows:int, row_list:list, column_width = None, cell_alignment_list = None, header_list = None):
     table = None
     table_body = []
     for index in range(amt_of_rows):
@@ -99,11 +99,10 @@ async def insert_reactions_to_message(message, reaction_list):
         await message.add_reaction(f'{reaction}')
 
     return message
-
-def connect_to_api_endpoint(http_method, url, header_dict=None, query_parameters_dict=None, path_parameter_dict=None,data=None):
-    try:
-        print()
-        result = requests.request(method=http_method, url=url,data=data, headers = header_dict, params = query_parameters_dict)
+  
+def connect_to_api_endpoint(http_method:str, url:str, header:dict=None, query_parameters:dict=None, path_parameter:dict=None,data:dict=None):
+    try:        
+        result = requests.request(method=http_method, url=url,data=data, headers = header, params = query_parameters)
         return result.json()
 
     except Exception as e:
