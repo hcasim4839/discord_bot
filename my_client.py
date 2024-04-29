@@ -11,6 +11,11 @@ class MyClient(discord.Client):
     load_dotenv()
     issuer = os.getenv("Issuer")
     spotify_player = None
+    spotify_player_dict = {
+        'bots_table_message_id': None,
+        'client_id': None,
+        'initiated_datetime': None
+    }
 
     start_bot_commands = {}
     spam_list = ['You are going to have to wait three minutes...','Try not to spam that',"It's quite expensive to start the servers you know!","You know this is using AWS resources too right?"]
@@ -23,7 +28,8 @@ class MyClient(discord.Client):
         
 
         
-        
+    async def on_raw_reaction_add(self,payload):
+        await self.check_spotify_player(payload)
 
     async def on_ready(self):
         print("Bot is ready")
@@ -34,7 +40,6 @@ class MyClient(discord.Client):
         if message.author.id in self.start_bot_commands and self.start_bot_commands[message.author.id] == 'find_track' and user_text:
             self.start_bot_commands[message.author.id] = None
             tracks_list = self.spotify_player.get_track_info(user_text)
-            print(tracks_list)
             tracks_and_artist_list = self.spotify_player.get_track_names_and_artist(tracks_list)
             amt_of_row = len(tracks_and_artist_list)
 
@@ -43,6 +48,11 @@ class MyClient(discord.Client):
             reaction_list = ['1️⃣','2️⃣','3️⃣', '4️⃣', '5️⃣', '6️⃣']
 
             sent_bot_message = await message.channel.send(bot_message)
+
+            self.spotify_player_dict['bots_table_message_id'] = sent_bot_message.id 
+            self.spotify_player_dict['client_id'] = message.author.id
+            self.spotify_player_dict['initiated_datetime'] = datetime.datetime.now()
+
             await bot_utilities.insert_reactions_to_message(sent_bot_message,reaction_list)
             
 
@@ -79,6 +89,20 @@ class MyClient(discord.Client):
             response = self.spam_list[message_index]
             await message.channel.send(response)
     
+    async def check_spotify_player(self, payload):
+        channel = self.get_channel(payload.channel_id)
+        is_spotify_player_off = bot_utilities.check_if_elapsed_time_passed(self.spotify_player_dict['initiated_datetime'], datetime.datetime.now(), 1)
+
+        if is_spotify_player_off:
+            await channel.send(f'The player has shut down, you took too long.')
+        else:
+            user = payload.user_id
+            is_reaction_on_music_player_table = True if payload.message_id == self.spotify_player_dict.get('bots_table_message_id') else False
+            is_reaction_by_appropriate_user = True if user == self.spotify_player_dict.get('client_id') else False
+
+            if is_reaction_on_music_player_table and is_reaction_by_appropriate_user:
+                await channel.send(f'You reacted! Great, I\'ll be on the voice channel')
+
     async def ping_issuer_error(self,message, responseType, responseMessage):
 
         user_id = bot_utilities.get_secret('client_id_discord_user_id','client-id')

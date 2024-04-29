@@ -30,7 +30,6 @@ class Spotify():
         result_list = []
         print(f'In the music_spotify: {tracks_list}')
         for track in tracks_list:
-            print(f'The current track: {track}')
             new_entry = [
                 track['album']['artists'][0]['name'],
                 track['name'],
