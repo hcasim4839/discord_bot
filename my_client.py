@@ -6,15 +6,19 @@ import os
 import datetime
 import random 
 from music_spotify import Spotify
+from music_spotify import Youtube
+from discord import FFmpegPCMAudio
 
 class MyClient(discord.Client):
     load_dotenv()
     issuer = os.getenv("Issuer")
     spotify_player = None
+    youtube = None
     spotify_player_dict = {
         'bots_table_message_id': None,
         'client_id': None,
-        'initiated_datetime': None
+        'initiated_datetime': None,
+        'music_search_query_list': None
     }
 
     start_bot_commands = {}
@@ -25,14 +29,27 @@ class MyClient(discord.Client):
         super().__init__(*args, **kwargs, intents=intents)
         spotify_client_secret = client_secret_cache['client_secret_spotify']
         self.spotify_player = Spotify(spotify_client_secret)
+        self.youtube = Youtube()
         
 
         
-    async def on_raw_reaction_add(self,payload):
-        await self.check_spotify_player(payload)
+    async def on_raw_reaction_add(self, payload):
+        
+        url = await self.check_spotify_player(payload)
+        voice_channel = self.guilds[0].voice_channels[0]
+        vc = await voice_channel.connect()
+        vc.play(FFmpegPCMAudio(url))
 
     async def on_ready(self):
         print("Bot is ready")
+    def insert_music_search_query_to_player(self, tracks_and_artist_list):
+        search_query_list = []
+        for artist_and_track in tracks_and_artist_list:
+            new_music_query = f'{artist_and_track[1]} song by "{artist_and_track[0]}"'
+            search_query_list.append(new_music_query)
+        
+        self.spotify_player_dict['music_search_query_list'] = search_query_list
+
     async def on_message(self, message):
         
         user_text = message.content
@@ -47,8 +64,9 @@ class MyClient(discord.Client):
             bot_message = f'Soo, I\'m getting these song results:`\n{table}`'
             reaction_list = ['1️⃣','2️⃣','3️⃣', '4️⃣', '5️⃣', '6️⃣']
 
+            self.insert_music_search_query_to_player(tracks_and_artist_list)
             sent_bot_message = await message.channel.send(bot_message)
-
+            
             self.spotify_player_dict['bots_table_message_id'] = sent_bot_message.id 
             self.spotify_player_dict['client_id'] = message.author.id
             self.spotify_player_dict['initiated_datetime'] = datetime.datetime.now()
@@ -102,6 +120,16 @@ class MyClient(discord.Client):
 
             if is_reaction_on_music_player_table and is_reaction_by_appropriate_user:
                 await channel.send(f'You reacted! Great, I\'ll be on the voice channel')
+                #check what the reaction was and transform to int and then query youtube class with that search 
+                user_choice = self.spotify_player_dict.get('music_search_query_list')[2]
+
+                id = self.youtube.get_first_search_result_video_id(user_choice)
+                audio_url = self.youtube.get_audio_stream_url(id)
+
+                await channel.send(f'The audio url is: {audio_url}, enjoy!')
+                return audio_url
+                
+                
 
     async def ping_issuer_error(self,message, responseType, responseMessage):
 
