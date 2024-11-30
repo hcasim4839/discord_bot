@@ -1,0 +1,14 @@
+name: Continuous Integration Workflow
+on:
+  push:
+
+jobs:
+  Python-Linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable checking code in Repo
+        uses: actions/checkout@v4
+      - name: Install pylint
+        run: pip install pylint
+      - name: Linter checks code
+        run: pylint **/**/*.py || true
