@@ -2,7 +2,9 @@ from discord import Intents, Client
 from my_client import MyClient
 from bot_utilities import get_secret, check_if_elapsed_time_passed
 from datetime import datetime
-
+from discord.ext import commands
+import discord
+import os
 access_token_cache = {
     'access_token_discord': None
 }
@@ -10,10 +12,12 @@ client_secrets_cache = {
     'client_secret_spotify': None
 }
 
-intents = Intents.default()
-intents.message_content = True
-client = Client(intents=intents)
+#intents = Intents.default()
+#intents.message_content = True
+#client = Client(intents=intents)
 
+intents = discord.Intents.default()
+intents.message_content = True
 #setting up credentials and caching them
 if access_token_cache.get('access_token_discord'):
     has_elapsed_time_passed = check_if_elapsed_time_passed(access_token_cache.get('access_token_discord'), datetime.now(), 360)
@@ -32,6 +36,23 @@ for key, value in client_secrets_cache.items():
         client_secrets_cache['client_secret_spotify'] = secret
 
 
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-client = MyClient(client_secrets_cache, intents=intents)
-client.run(token=token)
+# Dynamically load cogs
+async def load_cogs():
+    for filename in os.listdir("./cogs/music"):
+        print(f'{filename=}')
+        if filename.endswith(".py") and filename != "__init__.py":
+            await bot.load_extension(f"cogs.music.{filename[:-3]}")
+
+
+
+@bot.event
+async def on_ready():
+    await load_cogs()
+    print(f"Logged in as {bot.user}")
+
+bot.run(access_token_cache.get('access_token_discord'))
+
+#client = MyClient(client_secrets_cache, intents=intents)
+#client.run(token=token)

@@ -84,7 +84,7 @@ class Youtube():
         return None
 
 class Spotify():
-    client_id = '90d4133dd76d4b2c8adec68c9e302924'
+    client_id = ''
     client_secret = None
 
     access_token = None
