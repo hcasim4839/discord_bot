@@ -1,17 +1,17 @@
 from discord import Intents, Client
-from my_client import MyClient
 from bot_utilities import get_secret, check_if_elapsed_time_passed
 from datetime import datetime
 from discord.ext import commands
 import discord
 import os
+
 access_token_cache = {
     'access_token_discord': None
 }
+
 client_secrets_cache = {
     'client_secret_spotify': None
 }
-
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -34,7 +34,7 @@ for key, value in client_secrets_cache.items():
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Dynamically load cogs
+#Dynamically load cogs
 async def load_cogs():
     for filename in os.listdir("./cogs/music"):
         print(f'{filename=}')
