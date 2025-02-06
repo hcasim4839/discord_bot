@@ -1,5 +1,5 @@
 from discord import Intents, Client
-from bot_utilities import get_secret, check_if_elapsed_time_passed
+from utility.secret_manager import get_secret
 from datetime import datetime
 from discord.ext import commands
 import discord
@@ -16,16 +16,16 @@ client_secrets_cache = {
 intents = discord.Intents.default()
 intents.message_content = True
 #setting up credentials and caching them
-if access_token_cache.get('access_token_discord'):
-    has_elapsed_time_passed = check_if_elapsed_time_passed(access_token_cache.get('access_token_discord'), datetime.now(), 360)
-    if has_elapsed_time_passed:
-        token = get_secret('access_token_discord','access-token')
-        access_token_cache['access_token_discord'] = token
-    else:
-        token = access_token_cache.get('access_token_discord')
-else:
-    token = get_secret('access_token_discord','access-token')
-    access_token_cache['access_token_discord'] = token
+#if access_token_cache.get('access_token_discord'):
+#    has_elapsed_time_passed = check_if_elapsed_time_passed(access_token_cache.get('access_token_discord'), datetime.now(), 360)
+#    if has_elapsed_time_passed:
+#        token = get_secret('access_token_discord','access-token')
+#        access_token_cache['access_token_discord'] = token
+#    else:
+#        token = access_token_cache.get('access_token_discord')
+#else:
+token = get_secret('access_token_discord','access-token')
+access_token_cache['access_token_discord'] = token
 
 for key, value in client_secrets_cache.items():
     if value is None:

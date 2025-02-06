@@ -5,7 +5,7 @@ from utility.table_exporter import create_single_col_ascii_table
 from cogs.music.utility.youtube import get_sound_url
 from utility.text import add_multiple_reactions_to_message
 from utility.bot import get_voice_channels
-from discord.ext import commands
+import discord
 import time 
 import asyncio
 
@@ -35,6 +35,7 @@ class MusicPlayback(commands.Cog):
             self.title_options = await self.get_song_choices(ctx, song_title=song_title)
             music_option_table = create_single_col_ascii_table(amt_of_rows=len(self.title_options), row_list=self.title_options,header_list=['Music Title'])
             print(music_option_table)
+            await ctx.send(file=discord.File('output_file.png'))
             music_option_table_message = await ctx.send(music_option_table)
             self.song_choices_message_id = music_option_table_message.id
 
