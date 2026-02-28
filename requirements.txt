@@ -5,3 +5,4 @@ python-dotenv
 table2ascii
 yt-dlp
 PyNaCl
+Pillow
