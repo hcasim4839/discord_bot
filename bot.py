@@ -34,7 +34,6 @@ for key, value in client_secrets_cache.items():
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-#Dynamically load cogs
 async def load_cogs():
     for filename in os.listdir("./cogs/music"):
         print(f'{filename=}')
@@ -42,8 +41,16 @@ async def load_cogs():
             await bot.load_extension(f"cogs.music.{filename[:-3]}")
 
 @bot.event
-async def on_ready():
+async def setup_hook():
+    print("Loading cogs...")
     await load_cogs()
+
+    print("Syncing slash commands...")
+    await bot.tree.sync()  # global sync
+    print("Slash commands synced!")
+
+@bot.event
+async def on_ready():
     print(f"Logged in as {bot.user}")
 
 bot.run(access_token_cache.get('access_token_discord'))
