@@ -1,7 +1,9 @@
-#ignore everything
-/*
 
-#but...
+# keep track of
 !cogs
 !bot.py
 !utility
+
+# ignore everything else
+/*
+/cogs/git_password
