@@ -8,6 +8,18 @@ useful terminal commands:
 Clone the repo using the first useful command. The next step is to run the second command to have all the necessary packages installed. If not bot won't run. Also you need the aws credentials which the owner has. Request credentials.
 
 
+Getting dependencies
+
+1) Create virtual environment
+python -m venv venv
+
+2) Activate virtual environment
+.\venv\Scripts\Activate
+
+3) Install dependencies
+pip install -r requirements.txt
+
+
 Discord Bot Strucuture
 
 discord-bot/
